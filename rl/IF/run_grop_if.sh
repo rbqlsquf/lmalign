@@ -4,6 +4,7 @@ LOG_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/rl/IF/
 MODEL_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/checkpoints/lmalign/qwen3-1.7b-sft-by-tulu3-subsets"
 PER_DEVICE_TRAIN_BATCH_SIZE=4
 GRADIENT_ACCUMULATION_STEPS=4
+BETA=0.01
 
 
 export WANDB_PROJECT="OpenRLFT"
@@ -55,6 +56,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 accelerate launch --num_processes=7 /data/ib-
     --vllm_model_impl vllm \
     --per_device_train_batch_size $PER_DEVICE_TRAIN_BATCH_SIZE \
     --gradient_accumulation_steps $GRADIENT_ACCUMULATION_STEPS \
+    --beta $BETA \
     2>&1 | tee -a $LOG_FILE
 
 echo "Training completed at $(date)" | tee -a $LOG_FILE

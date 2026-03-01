@@ -208,6 +208,7 @@ if __name__ == "__main__":
     parser.add_argument("--use_vllm", type=bool, default=True)
     parser.add_argument("--vllm_mode", type=str, default="server")
     parser.add_argument("--vllm_model_impl", type=str, default="vllm")
+    parser.add_argument("--beta", type=float, default=0.01)
 
     args = parser.parse_args()
     model_name = args.model_name
@@ -227,6 +228,7 @@ if __name__ == "__main__":
     vllm_mode = args.vllm_mode
     vllm_model_impl = args.vllm_model_impl
     logging_steps = args.logging_steps
+    beta = args.beta
     # --- 데이터셋 로드 ---
     ds1_id = "allenai/RLVR-IFeval"
     ds2_id = "allenai/IF_multi_constraints_upto5"
@@ -245,6 +247,12 @@ if __name__ == "__main__":
     ds1_train = ds1_train.select_columns(common_cols)
     ds2_train = ds2_train.select_columns(common_cols)
     train_dataset = concatenate_datasets([ds1_train, ds2_train]).shuffle(seed=42)
+        # 극단적으로 긴 프롬프트 제거
+    def filter_long_prompts(example):
+        content = example["prompt"][-1]["content"]  # user message
+        return len(tokenizer.encode(content, add_special_tokens=False)) <= 4096
+
+    train_dataset = train_dataset.filter(filter_long_prompts, num_proc=32)
 
     training_args = GRPOConfig(
         output_dir=output_dir,
@@ -271,6 +279,8 @@ if __name__ == "__main__":
         vllm_model_impl=vllm_model_impl,
         vllm_server_base_url="http://localhost:8000",
         chat_template_kwargs={"enable_thinking": False},
+
+        beta=beta
         )
 
     # 두 데이터셋 합쳤으므로 통합 reward 사용
