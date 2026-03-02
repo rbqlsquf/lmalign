@@ -192,3 +192,5 @@ bash eval/scripts/eval.sh /path/to/rl-checkpoint 8000 eval/results/grpo-checkpoi
 - [Google Research IFEval](https://github.com/google-research/google-research/tree/master/instruction_following_eval)
 - [AllenAI RLVR-IFeval Dataset](https://huggingface.co/datasets/allenai/RLVR-IFeval)
 - [AllenAI IF_multi_constraints Dataset](https://huggingface.co/datasets/allenai/IF_multi_constraints_upto5)
+- [AllenAI Open-Instruct ground_truth_utils.py](https://github.com/allenai/open-instruct/blob/main/open_instruct/ground_truth_utils.py)
+- [AllenAI Open-Instruct IFEvalG instructions_registry.py](https://github.com/allenai/open-instruct/blob/main/open_instruct/IFEvalG/instructions_registry.py)
