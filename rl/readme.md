@@ -18,7 +18,7 @@ pip install git+https://github.com/huggingface/trl.git@main
 pip install transformers datasets accelerate vllm wandb
 ```
 
-> TRL main 브랜치(1.0.0.dev0)가 필요하다. PyPI의 stable 릴리즈에는 `GRPOTrainer`의 `vllm_mode="server"` 및 tool calling 관련 기능이 아직 포함되어 있지 않아 설치 시 에러가 발생한다.
+> **왜 main 브랜치인가?** Qwen3의 chat template에는 tool calling 관련 분기(`{%- if tools %}`)가 포함되어 있다. PyPI stable 버전의 TRL은 이 template을 처리할 때 tool calling 경로를 잘못 타면서 에러가 발생한다. 실제로 tool calling을 사용하지 않더라도 template 파싱 단계에서 문제가 생기므로, 이 버그가 수정된 main 브랜치를 설치해야 한다.
 
 Google Research IFEval 검증 코드가 `/opt/benchmarks/google-research`에 설치되어 있어야 한다.
 
