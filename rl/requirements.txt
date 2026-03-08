@@ -1,0 +1,17 @@
+# TRL은 PyPI 릴리즈가 아닌 main 브랜치에서 설치 (Qwen3 chat template 버그 수정)
+trl @ git+https://github.com/huggingface/trl.git@main
+transformers>=4.57.0
+datasets>=4.6.0
+accelerate>=1.11.0
+wandb>=0.25.0
+vllm>=0.11.0
+
+# IFEval 검증 의존성
+langdetect>=1.0.9
+absl-py>=2.4.0
+immutabledict>=4.0.0
+nltk>=3.8.0
+
+# Math/Code 검증 의존성
+sympy>=1.13.0
+requests>=2.31.0

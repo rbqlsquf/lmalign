@@ -192,6 +192,16 @@ bash eval/scripts/eval_arena-hard.sh <model_path> <port> <output_dir>
 bash eval/scripts/mt_beach_eval.sh <model_name> <output_dir>
 ```
 
+#### IFBench 평가 시 패키지 패치 (필수)
+
+NeMo-Skills의 `ifbench.py`에 파일명 버그가 있다. IFBench `run_eval`은 결과 파일에 입력 파일명을 접두사로 붙이지만 (`output-eval_results_loose.jsonl`), nemo_skills는 접두사 없이 (`eval_results_loose.jsonl`) 찾는다. 아래 명령으로 패치:
+
+```bash
+sudo sed -i \
+  's|output_dir / "eval_results_loose.jsonl"|output_dir / f"{jsonl_path.stem}-eval_results_loose.jsonl"|; s|output_dir / "eval_results_strict.jsonl"|output_dir / f"{jsonl_path.stem}-eval_results_strict.jsonl"|' \
+  /usr/local/lib/python3.12/dist-packages/nemo_skills/evaluation/evaluator/ifbench.py
+```
+
 ## Supported Benchmarks
 
 | Category | Benchmarks | Script |

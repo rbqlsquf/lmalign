@@ -1,12 +1,14 @@
 #!/bin/bash
-OUTPUT_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/checkpoints/lmalign/GROP/IF"
+OUTPUT_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/checkpoints/lmalign/GROP/IF_open_instruct_check_verify_new"
 LOG_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/rl/IF/logs"
 MODEL_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/checkpoints/lmalign/qwen3-1.7b-sft-by-tulu3-subsets"
 PER_DEVICE_TRAIN_BATCH_SIZE=4
 GRADIENT_ACCUMULATION_STEPS=4
 BETA=0.01
+WANDB_NAME="if-grpo-check_verify_new"
 
-
+# open_instruct 모듈 경로 추가
+export PYTHONPATH="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/rl:$PYTHONPATH"
 export WANDB_PROJECT="OpenRLFT"
 
 if [ ! -d $LOG_DIR ]; then
@@ -50,13 +52,15 @@ done
 echo "vLLM server ready."
 
 # 2. GRPO 학습 실행 (나머지 GPU 7개)
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 accelerate launch --num_processes=7 /data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/rl/IF/grpo_train.py \
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 accelerate launch --num_processes=7 /data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/rl/IF/scripts/grpo_train.py \
     --model_name $MODEL_DIR \
     --vllm_mode server \
     --vllm_model_impl vllm \
     --per_device_train_batch_size $PER_DEVICE_TRAIN_BATCH_SIZE \
     --gradient_accumulation_steps $GRADIENT_ACCUMULATION_STEPS \
     --beta $BETA \
+    --wandb_name $WANDB_NAME \
+    --output_dir $OUTPUT_DIR \
     2>&1 | tee -a $LOG_FILE
 
 echo "Training completed at $(date)" | tee -a $LOG_FILE

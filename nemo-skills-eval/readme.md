@@ -9,3 +9,15 @@
    ```
 
 위 두 단계를 모두 수행해야 합니다.
+
+# /opt/benchmarks 생성 (권한 필요할 수 있음)
+sudo mkdir -p /opt/benchmarks
+sudo chown "$USER:$USER" /opt/benchmarks
+
+# IFBench 클론
+cd /opt/benchmarks
+git clone https://github.com/allenai/IFBench.git
+
+# 의존성 설치 (저장소의 requirements.txt 사용)
+cd IFBench
+pip install -r requirements.txt

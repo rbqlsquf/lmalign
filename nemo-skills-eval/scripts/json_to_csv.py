@@ -49,12 +49,12 @@ def get_important_metrics(benchmark):
 
     # IFEval - average_score and instruction_strict_accuracy are main metrics
     if 'ifeval' in benchmark_lower:
-        return ['average_score', 'instruction_strict_accuracy']
+        return ['average_score', 'instruction_strict_accuracy', 'prompt_strict_accuracy']
 
     # Default: try to find common important metrics
     # This will be filtered based on what's actually available
     return ['symbolic_correct', 'passing_base_tests', 'passing_plus_tests',
-            'average_score', 'instruction_strict_accuracy', 'judge_correct']
+            'average_score', 'instruction_strict_accuracy', 'judge_correct', 'prompt_strict_accuracy']
 
 
 def extract_metrics_from_json(json_path, model_name=None):

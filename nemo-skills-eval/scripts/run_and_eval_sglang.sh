@@ -6,10 +6,10 @@
 export NEMO_SKILLS_CONFIG_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/nemo-skills-harness/configs"
 export NEMO_SKILLS_DATA_DIR="/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/nemo-skills-harness/datasets"
 
-MODEL_DIR=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/checkpoints/lmalign/GROP/IF
-EVAL_SCRIPT=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/eval/scripts/eval.sh
-SGLANG_SCRIPT=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/eval/scripts/sglang.sh
-RESULTS_BASE=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/eval/results/GRPO/IF
+MODEL_DIR=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/checkpoints/lmalign/GROP/IF_open_instruct_check_verify_new
+EVAL_SCRIPT=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/nemo-skills-eval/scripts/eval.sh
+SGLANG_SCRIPT=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/nemo-skills-eval/scripts/sglang.sh
+RESULTS_BASE=/data/ib-a100-cluster-a-pri-lmt_967/users/kaya/workspace/lmalign/nemo-skills-eval/results/GRPO/IF_open_instruct_check_verify_new
 PORT=8000
 SGLANG_PID=""
 
@@ -26,6 +26,14 @@ cleanup_sglang() {
         sleep 5
         SGLANG_PID=""
     fi
+
+    # Kill leftover eval child processes (e.g. infinite-loop sandbox code)
+    echo "Cleaning up orphaned python /tmp/tmp*.py processes..."
+    pkill -f 'python3 /tmp/tmp.*\.py' 2>/dev/null || true
+    sleep 1
+    pkill -9 -f 'python3 /tmp/tmp.*\.py' 2>/dev/null || true
+    # Remove leftover temp python files
+    rm -f /tmp/tmp*.py 2>/dev/null || true
 
     echo "Waiting for port $PORT to be released..."
     while lsof -i :$PORT > /dev/null 2>&1; do
@@ -65,6 +73,9 @@ while true; do
 
         if ! bash $EVAL_SCRIPT $MODEL_PATH $PORT $RESULTS_DIR; then
             echo "ERROR: eval failed for $MODEL_NAME, exiting."
+            # Still clean up orphaned processes before exiting
+            pkill -9 -f 'python3 /tmp/tmp.*\.py' 2>/dev/null || true
+            rm -f /tmp/tmp*.py 2>/dev/null || true
             exit 1
         fi
 
